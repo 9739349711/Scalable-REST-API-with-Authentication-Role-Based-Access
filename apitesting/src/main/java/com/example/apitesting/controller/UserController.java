@@ -28,8 +28,16 @@ public class UserController {
 
     // UPDATE user
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody User user) {
-        user.setId(id);
+    public User updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+
+        user.setUsername(userDetails.getUsername());
+        user.setEmail(userDetails.getEmail());
+        user.setPassword(userDetails.getPassword());
+        user.setRole(userDetails.getRole());
+
         return userRepository.save(user);
     }
 
