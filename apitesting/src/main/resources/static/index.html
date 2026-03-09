@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth Page</title>
+    <style>
+        .hidden { display: none; }
+        .container { margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div id="login-section" class="container">
+    <h2>User Login</h2>
+    <input id="login-email" placeholder="Email" type="email">
+    <input id="login-password" placeholder="Password" type="password">
+    <button onclick="login()">Login</button>
+    <p>Don't have an account? <a href="#" onclick="toggleView()">Register here</a></p>
+</div>
+
+<div id="register-section" class="container hidden">
+    <h2>User Registration</h2>
+    <input id="reg-name" placeholder="Full Name">
+    <input id="reg-email" placeholder="Email" type="email">
+    <input id="reg-password" placeholder="Password" type="password">
+    <button onclick="register()">Register</button>
+    <p>Already have an account? <a href="#" onclick="toggleView()">Login here</a></p>
+</div>
+
+<script>
+    // Toggle between Login and Register UI
+    function toggleView() {
+        document.getElementById('login-section').classList.toggle('hidden');
+        document.getElementById('register-section').classList.toggle('hidden');
+    }
+
+    // Existing Login Function
+    function login() {
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+
+        fetch("/api/v1/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        })
+        .then(res => res.text())
+        .then(data => alert(data))
+        .catch(err => console.error("Login Error:", err));
+    }
+
+    // New Registration Function
+    function register() {
+        const name = document.getElementById("reg-name").value;
+        const email = document.getElementById("reg-email").value;
+        const password = document.getElementById("reg-password").value;
+
+        fetch("/api/v1/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                password: password
+            })
+        })
+        .then(res => res.text())
+        .then(data => {
+            alert(data);
+            if(data.includes("success")) toggleView(); // Switch to login on success
+        })
+        .catch(err => console.error("Registration Error:", err));
+    }
+</script>
+
+</body>
+</html>
